@@ -1,0 +1,60 @@
+---
+title: "STA5075: Practical 3"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+## Find all rows in airquality that have missing values.
+
+```{r}
+which(is.na(airquality)) # identify which rows have missing values
+```
+## Question 2
+## Find mean, sd, min, max for each of temperature and ozone level.
+
+```{r}
+# Temperature
+mean(airquality$Temp) # mean temperature
+sd(airquality$Temp) # standard deviation of temperature
+min(airquality$Temp) # minimum temperature
+max(airquality$Temp) # maximum temperature
+
+# Ozone level
+mean(airquality$Ozone, na.rm = TRUE) # mean Ozone level
+sd(airquality$Ozone, na.rm = TRUE) # standard deviation of Ozone level
+min(airquality$Ozone, na.rm = TRUE) # minimum Ozone level
+max(airquality$Ozone, na.rm = TRUE) # maximum Ozone level
+```
+## Question 3
+## The cars data (an R data set) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the B estimates, using the equation above, and matrix calculations in R.
+
+```{r}
+x <- cbind(1, cars$speed) # x matrix
+y <- cars$dist # y matrix
+
+solve(t(x)%*%x)%*%(t(x)%*%y) # y intercept = -17.579095, coefficient of speed = 3.932409
+```
+
+## Question 4
+## Check that you get the same B estimates as when fitting the linear regression model using lm() in R.
+
+```{r}
+m1 <- lm(dist ~ speed, data = cars)
+m1$coefficients
+```
+
+## Question 5
+## Mean life expectancy in South Africa? 53.99317.
+
+```{r}
+library(gapminder)
+sa <- gapminder[gapminder$country == "South Africa", ] # create subset of dataset for South Africa
+mean(sa$lifeExp) # mean life expectancy in South Africa = 53.99317
+```
+

@@ -1,0 +1,40 @@
+---
+title: "STA5075: Practical 2"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+There are 2 trees in the middle of the Kalahari. On each tree birds of unknown species are sitting and feeling very hot. A bird from the first tree says to those on the second tree: “Hi – if one of you come to our tree then there will be the same number of us on each tree”. “Yeah, right”, says a bird from the second tree, “but if one of you comes to our tree, then we will be twice as many on our tree as on yours”.
+
+## Question: How many birds are on each tree? More specifically:
+- Write up two equations with two unknowns.
+- Solve these equations using the methods you have learned above.
+- Simply finding the solution by trial–and–error is considered cheating.
+
+## My solution
+
+Let x be the number of birds on the first tree, and let y be the number of birds on the second tree.
+
+My two equations are as follows:
+
+1. y + 1 = 2(x-1), so:
+  -2x + y = -3
+
+2. x +1 = y - 1, so: 
+    x - y = -2
+
+```{r}
+# Solve using matrix multiplication
+A <- matrix(c(-2, 1, 1, -1), ncol = 2)
+b <- c(-3, -2)
+x <- solve(A) %*% b
+x
+
+x[1] # 5 birds on the first tree
+x[2] # 7 birds on the second tree
+```

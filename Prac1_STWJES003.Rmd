@@ -1,0 +1,76 @@
+---
+title: "STA5075: Practical 1"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+## Calculate log(i + 1) for i = 0 to 100. The average of these values should = 3.647074.
+
+```{r}
+i <- 0:100 # create vector i
+
+# create function
+x.log <- function(x) {
+    return(log(i+1))
+}
+
+x.log(i)
+
+mean(x.log(i), na.rm = TRUE) # average =  3.647074
+```
+
+## Question 2
+## Generate 10000 random values.
+
+```{r}
+set.seed(20230130) # set starting point for random number generator 
+## generate 10000 values from an exponential distribution, mean = 1
+y <- rexp(10000)
+```
+
+## Question 3
+## Find the largest number and its position. (Answer: 9.131717, 9293)
+
+```{r}
+max(y) # find the maximum number in vector y # 9.131717
+which(y == max(y)) # find its position # 9293
+```
+## Question 4
+## How many values are > 2 (absolute and %)? (Answer: 1333, 13.33%)
+
+```{r}
+length(which(y > 2)) # 1333
+length(which(y > 2))/length(y)*100 # 13.33
+```
+
+## Question 5
+## y2: select every 2nd element of y, starting from 1st.
+
+```{r}
+y2 <- y[seq(from = 1, to = length(y), by = 2)]
+```
+
+## Question 6
+## y3: replace values > 3 in y2 with 3. 
+
+```{r}
+y3 <- y2
+y3[y3 > 3] <- 3 # replace values greater than 3 with 3
+mean(y3) # average = 0.9362115
+```
+
+## Question 7
+## Find the variance of y3 using vector operations. Check with var().
+
+```{r}
+sum((y3-mean(y3))^2)/(length(y3)-1) # manual calculation of the variance
+
+var(y3) == sum((y3-mean(y3))^2)/(length(y3)-1) # TRUE
+```
+
