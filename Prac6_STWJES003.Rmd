@@ -1,0 +1,132 @@
+---
+title: "STA5075: Practical 4"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-05"
+output: 
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Produce a beautiful plot in a document:  
+
+- Gapminder: Plot life expectancy against GDP, don’t attach, colour by continent.  
+- Does a log-transformation help to bring out the information more clearly?
+- R Markdown document (html, word, pdf)
+- Figure caption
+- Axis labels and sizing. Improve visually. Legend.
+- Improve size and placement.
+
+```{r}
+library(gapminder)
+
+str(gapminder)
+nlevels(gapminder$continent) # 5 levels
+levels(gapminder$continent)
+
+summary(gapminder$gdpPercap)
+summary(gapminder$lifeExp)
+```
+
+
+```{r}
+# Plot life expectancy against GDP
+plot(seq(min(gapminder$gdpPercap), max(gapminder$gdpPercap), length = 1000), 
+     seq(min(gapminder$lifeExp), max(gapminder$lifeExp), length = 1000),
+     type = "n",
+     xlab = "GDP per capita in US $",
+     ylab = "Life expectancy (years)",
+     main = "Relationship between life expectancy (years) and GDP per capita (US $)")
+
+# Add the points
+# AFRICA
+africa <- gapminder[gapminder$continent == "Africa",]
+points(africa$gdpPercap, africa$lifeExp, col = "red")
+
+# AMERICAS
+americas <- gapminder[gapminder$continent == "Americas",]
+points(americas$gdpPercap, americas$lifeExp, col = "blue")
+
+# ASIA
+asia <- gapminder[gapminder$continent == "Asia",]
+points(asia$gdpPercap, asia$lifeExp, col = "green")
+
+# EUROPE
+europe <- gapminder[gapminder$continent == "Europe",]
+points(europe$gdpPercap, europe$lifeExp, col = "black")
+
+# OCEANA
+oceania <- gapminder[gapminder$continent == "Oceania",]
+points(oceania$gdpPercap, oceania$lifeExp, col = "purple")
+```
+
+\newpage 
+
+```{r fig.width=10, fig.height=10, fig.align='center'}
+# Plot life expectancy against log of GDP
+
+plot(seq(min(log(gapminder$gdpPercap)), max(log(gapminder$gdpPercap)), length = 1000), 
+     seq(min(gapminder$lifeExp), max(gapminder$lifeExp), length = 1000),
+     type = "n",
+     cex.lab = 1.2, # axis label size
+     cex.axis = 0.8, 
+     xlab = "GDP per capita in US $ (Log transformed)",
+     ylab = "Life expectancy (years)",
+     main = "Relationship between life expectancy (years) and GDP per capita (US $)")
+
+# Add the points LOG TRANSFORMED
+# AFRICA
+africa <- gapminder[gapminder$continent == "Africa",]
+points(log(africa$gdpPercap), africa$lifeExp, col = "red")
+
+# AMERICAS
+americas <- gapminder[gapminder$continent == "Americas",]
+points(log(americas$gdpPercap), americas$lifeExp, col = "blue")
+
+# ASIA
+asia <- gapminder[gapminder$continent == "Asia",]
+points(log(asia$gdpPercap), asia$lifeExp, col = "green")
+
+# EUROPE
+europe <- gapminder[gapminder$continent == "Europe",]
+points(log(europe$gdpPercap), europe$lifeExp, col = "black")
+
+# OCEANA
+oceania <- gapminder[gapminder$continent == "Oceania",]
+points(log(oceania$gdpPercap), oceania$lifeExp, col = "purple")
+
+# Legend
+legend("bottomright", 
+       legend = c("Africa", "Americas", "Asia", "Europe", "Oceania"), 
+       col = c("red", "blue", "green", "black", "purple"), 
+       pch = 1, 
+       cex = 0.9) 
+```
+
+\newpage
+
+- How many different countries occur in this data set?
+```{r}
+length(unique(gapminder$country)) # 142 countries
+```
+
+- How many African countries?
+```{r}
+africa <- gapminder[gapminder$continent == "Africa",]
+length(unique(africa$country)) # 52 African countries
+```
+
+- Which countries have the lowest and highest life expectancy, respectively? In which years? (There are several observations/years per country).
+
+```{r}
+lowest <- min(gapminder$lifeExp)
+gapminder[gapminder$lifeExp == lowest,] # Rwanda 1992, life expectancy of 23.599 years
+
+highest <- max(gapminder$lifeExp)
+gapminder[gapminder$lifeExp == highest,] # Japan 2007, life expectancy of 82.603 years
+```
+

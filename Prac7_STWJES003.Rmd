@@ -1,0 +1,134 @@
+---
+title: "STA5075: Practical 7"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Read the following data into R. Each time check that R has done the right thing. Leave the data as original as possible.
+1. counts.xlsx (on Vula, Resources → data)
+2. Tortoise data.xls, sheet ‘Tortoise measurements’ (on Vula)
+3. Globular clusters: http://www.physics.mcmaster.ca/~harris/GCS_table. txt
+4. Large-scale climatic index (MEI): https://www.esrl.noaa.gov/psd/enso/ mei/data/meiv2.data
+5. Voice Data from Singing the Vowel ‘ooh’: http://www.statsci.org/data/ general/ooh.txt
+6. Air quality data: air2.dat (on Vula)
+7. 2D Pollen counts: 8.Red-cross-feb-aug-89-starts 20 Feb-1989.xls (on Vula)
+8. wader counts.xls (on Vula)
+
+```{r}
+# Set working directory
+getwd()
+
+# Clear workspace
+rm(list = ls())
+
+# Check workspace is clear
+ls()
+
+library(openxlsx) # for reading .xlsx files
+library(readxl) # tidyverse - works both on .xls and .xlsx files
+
+# can set stringsAsFactors = TRUE when reading in file
+```
+
+## Question 1: counts.xlsx
+
+```{r}
+df1 <- read.xlsx("counts.xlsx", sheet = 1)
+
+# rename columns
+colnames(df1)[1] <- "observation"
+colnames(df1)[4] <- "comments"
+
+# format as date
+df1$day.month.year <- as.Date(df1$day.month.year, format = "%d %b %Y")
+
+str(df1)
+View(df1)
+```
+
+## Question 2: Tortoise data.xls, sheet ‘Tortoise measurements’
+
+```{r}
+df2 <- read_excel("Tortoise data.xls", sheet = "Tortoise measurements")
+str(df2)
+
+# format as factors
+df2$Sex <- as.factor(df2$Sex)
+df2$Habitat <- as.factor(df2$Habitat)
+df2$Behaviour <- as.factor(df2$Behaviour)
+
+# rename last column
+colnames(df2)[12] <- "Comments"
+
+str(df2)
+View(df2)
+```
+
+## Question 3: Globular clusters http://www.physics.mcmaster.ca/~harris/GCS_table.txt
+
+```{r}
+url_gcs <- "http://www.physics.mcmaster.ca/~harris/GCS_table.txt"
+
+df3 <- read.table(url_gcs, sep = "", header = F, skip =39, nrows = 422)
+head(df3)
+```
+
+## Question 4: Large-scale climatic index (MEI): https://www.esrl.noaa.gov/psd/enso/mei/data/meiv2.data
+Data set unavailable
+
+```{r}
+# Data set no longer available
+# url_mei <- "https://www.esrl.noaa.gov/psd/enso/mei/data/meiv2.data"
+
+# df4 <- read.table(url_mei, sep = " ", header = FALSE, skip =1, fill = FALSE)
+# View(df4)
+```
+
+## Question 5: Voice Data from Singing the Vowel ‘ooh’ http://www.statsci.org/data/general/ooh.txt
+
+```{r}
+url_ooh <- "http://www.statsci.org/data/general/ooh.txt"
+
+df5 <- read.table(url_ooh, header = TRUE)
+str(df5)
+View(df5)
+```
+
+## Question 6: Air quality data: air2.dat
+
+```{r}
+df6 <- read.table("air2.dat", sep = ";")
+str(df6)
+```
+
+## Question 7: 2D Pollen counts: 8.Red-cross-feb-aug-89-starts 20 Feb-1989.xls
+
+```{r}
+# 7. 2D Pollen counts: 8.Red-cross-feb-aug-89-starts 20 Feb-1989.xls (on Vula)
+df7 <- read_excel("8.Red-cross-feb-aug-89-starts 20 Feb-1989.xls", 
+                  skip = 2, sheet = "2 D Pollen Counts")
+df7$`Site: Observatory` <- as.factor(df7$`Site: Observatory`)
+df7$Category <- as.factor(df7$Category)
+str(df7)
+```
+
+
+## Question 8: wader counts.xls
+
+```{r}
+# 8. wader counts.xls (on Vula)
+
+df8 <- read_excel("wader counts.XLS")
+str(df8)
+
+# format as factors
+df8$Site <- as.factor(df8$Site)
+
+str(df8)
+View(df8)
+```

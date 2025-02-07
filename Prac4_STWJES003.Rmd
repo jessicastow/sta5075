@@ -1,0 +1,68 @@
+---
+title: "STA5075: Practical 4"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results = 'hide')
+```
+
+Create a smooth version of the above sin function: increase the number of x-values at which f(x) is evaluated, e.g to 1000. Your final plot should:
+
+- Plot the line directly, without points first. Increase line width, and change colour to red.
+- Add the cos(x) line to the same plot, in blue.
+- Improve the general look of the figure.
+
+```{r}
+x <- seq(-pi, pi, length = 1000) # vector of 10 values between -pi 
+y <- sin(x) # sin(x) for each x value
+y2 <- cos(x) # cos(x) for each x value
+
+# plot sin(x) graph
+plot(y ~ x,
+     type = "l", # line plot
+     col = "red", # colour of line = red
+     main = "Plot of sin(x) and cos(x) graph", # add a title
+     xlab =  "x (radians)",
+     ylab = "Value",
+     cex.axis = 0.8,
+     cex.lab = 1.2,
+     lwd =2
+)
+lines(x, y2, col = "blue", lwd =2 ) # add cos(x) points to existing graph
+legend("topleft", legend = c("sin(x)", "cos(x)"),
+       col = c("red", "blue"), lty = 1, lwd = 2)
+```
+
+\newpage
+
+- What would happen if the x’s were a random uniform sample between -pi and pi? Try 
+
+```{r}
+set.seed(123) 
+
+x_random <- runif(500, min = -pi, max = pi)
+y_random <- sin(x_random)
+y2_random <- cos(x_random)
+
+# Plot sin(x)
+plot(x_random, y_random, 
+     col = "red", 
+     cex = 0.6,
+     pch = 20,
+     main = "Scatterplot of sin(x) and cos(x) with Random uniform sample (x)",
+     xlab = "x (radians)", 
+     ylab = "Value")
+
+# add cos(x) points
+points(x_random, y2_random, col = "blue", pch = 20, cex = 0.6)
+
+# Add legend
+legend("topleft", 
+       legend = c("sin(x)", "cos(x)"), 
+       col = c("red", "blue"), 
+       pch = 16)
+```
+We notice that the distribution is the same, and if we were to increase the number of randomly sampled values in the `runif` function then we would get a more continuous, smooth line (since we have more data points) and it will begin to resemble that of the first cos(x) and sin(x) graphs produced. 

@@ -1,0 +1,59 @@
+---
+title: "STA5075: Practical 5"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+## Generate 1000 values from N(1,2) distribution and summarise these in a histogram. Change the histogram so that density and not frequency is shown on the y-axis. Calculate the true N(1,2) density over the domain of N(1,2) and plot this on top of the histogram using a thick red line.
+
+```{r}
+# Save our files in default format, 
+# uncomment to run
+# bmp(filename = "Rplot.bmp")
+# jpeg(filename = "Rplot.jpeg")
+# png(filename = "Rplot.png")
+# tiff(filename = "Rplot.tiff")
+
+# Set seed
+set.seed(123)
+
+# generate 1000 random values from normal distribution with a mean of 1 and a variance of 2
+x <- rnorm(1000, 
+           mean = 1, 
+           sd = sqrt(2))
+
+x = sort(x) # sort in ascending order
+
+hist(x,
+     freq = FALSE, # plot density - instead of frequency
+     breaks = 20,
+     xlim = c(-4,6),
+     ylim = c(0, 0.35),
+     main = "Histogram of density of 1000 values from N(1,2) distribution",
+     xlab = "Value")
+
+lines(x, dnorm(x, mean = 1, sd = sqrt(2)), 
+      col = "red",
+      lwd = 2.5)
+
+dev.off()
+```
+
+## Question 2
+## Save different formats of this (see help for png?png). Copy all of these into a word document and comment on the differences. Which clearly works best, even when you really zoom in?
+
+When we use the default settings to create the BMP, JPEG, PNG and TIFF files there doesn't appear to be any difference in the quality of the plots. However, when we zoom in we can observe the following:
+
+- the BMP, PNG and TIFF files capture the sharpest image.  
+- although the quality of image produced is similar, the file size for both the BMP and TIFF is much larger (900KB) in comparison to the PNG file size (30 KB).   
+- the JPEG captures a lot of noise in the image resulting in it being not as sharp and the colours not being accurate (especially the red which appears brown), but it has the advantage that its file size is small (30KB)   
+- overall, PNG files appear to be the best format to save our plots since it stores a sharp image, with the most detail, accurate colouring, and is of a small file size.
+
+
+

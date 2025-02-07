@@ -1,0 +1,13 @@
+---
+title: "STA5075: Practical 8"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-05"
+output: 
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
