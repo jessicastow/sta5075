@@ -1,7 +1,7 @@
 ---
 title: "STA5075: Practical 8"
 author: "Jessica Stow (STWJES003@myuct.ac.za)"
-date: "2025-02-05"
+date: "2025-02-07"
 output: 
   pdf_document: default
   html_document: default
@@ -11,3 +11,72 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Question 1: 
+## Use a for loop to calculate cumulative probabilities from the counts produced by the hist() function below.
+
+```{r}
+x <- rnorm(1000)
+x.hist <- hist(x, plot = FALSE) 
+str(x.hist) 
+
+counts <- x.hist$counts/1000 # relative frequency counts
+n <- length(x) 
+
+cum_prob <- numeric(n) # create a vector of length n
+
+for (i in 2:n) {
+  cum_prob[i] <- counts[i] + cum_prob[i-1]
+}
+```
+
+## Question 2 & 3 
+## Plot this empirical cumulative distribution function. Use a step function.
+## Add lines(ecdf(x), col = "red") to compare.
+
+```{r}
+plot(x.hist$mids, cum_prob, 
+     type = "s", # right side step function
+     xlab = "x", 
+     ylab = "Cumulative probability (%)",
+     main = "Cumulative distribution function")
+
+# Add lines(ecdf(x), col = "red") to compare.
+lines(ecdf(x), col = "red")
+```
+
+## Question 4
+## Make this into a function and apply the function to the vector x.
+
+```{r}
+# make function
+cdf <- function(x) {
+  x.hist <- hist(x, plot = FALSE)
+  counts <- x.hist$counts/length(x) # relative frequency counts
+  n <- length(counts)
+  
+  cum_prob <- numeric(n) # create a vector of length n
+  
+  for (i in 2:n) {
+    cum_prob[i] <- counts[i] + cum_prob[i-1]
+  }
+  plot(x.hist$mids, cum_prob, 
+     type = "s", # right side step function
+     xlab = "x", 
+     ylab = "Cumulative probability (%)",
+     main = "Cumulative distribution function")
+  lines(ecdf(x), col = "red", lwd = 2)
+}
+
+# apply the function to the vector x.
+cdf(x)
+```
+
+## Question 5
+## Test your function with other data.
+
+```{r}
+uuu <- runif(50000) 
+cdf(uuu)
+```
+

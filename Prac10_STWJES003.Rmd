@@ -1,0 +1,23 @@
+---
+title: "STA5075: Practical 10"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-07"
+output: 
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Use a while loop. Simulate a random walk until |rw| > 2. N(0,0.05^2)
+Plot this while ‘walking’.
+
+```{r}
+while(x < -2 & x > 2){
+  
+}
+```
+

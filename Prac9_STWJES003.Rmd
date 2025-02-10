@@ -1,0 +1,35 @@
+---
+title: "STA5075: Practical 9"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-07"
+output: 
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Generate 100 values from a Poisson distribution with mean 2. Now count the number of zeroes using loops and conditional expressions.
+
+```{r}
+set.seed(123)
+x <- rpois(n = 100, lambda = 2)
+
+count = 0
+for (i in x) {
+  if (i == 0) {
+    count <- count + 1
+  }
+}
+print(count)
+
+## Check answer
+num.zer <- length(x[x == 0])
+print(num.zer)
+
+# Check if the values are equal
+count == num.zer
+```
