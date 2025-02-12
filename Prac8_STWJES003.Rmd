@@ -21,29 +21,32 @@ x.hist <- hist(x, plot = FALSE)
 str(x.hist) 
 
 counts <- x.hist$counts/1000 # relative frequency counts
-n <- length(x) 
 
-cum_prob <- numeric(n) # create a vector of length n
+cum_prob <- numeric(length(counts)) # create a vector of same length
 
-for (i in 2:n) {
+for (i in 2:length(counts)) {
   cum_prob[i] <- counts[i] + cum_prob[i-1]
 }
 ```
+
+\newpage
 
 ## Question 2 & 3 
 ## Plot this empirical cumulative distribution function. Use a step function.
 ## Add lines(ecdf(x), col = "red") to compare.
 
 ```{r}
+# using the middle of the bins for plotting
 plot(x.hist$mids, cum_prob, 
      type = "s", # right side step function
-     xlab = "x", 
-     ylab = "Cumulative probability (%)",
+     ylab = "Cumulative probability",
+     xlab = "x",
      main = "Cumulative distribution function")
 
 # Add lines(ecdf(x), col = "red") to compare.
 lines(ecdf(x), col = "red")
 ```
+\newpage
 
 ## Question 4
 ## Make this into a function and apply the function to the vector x.
@@ -71,6 +74,8 @@ cdf <- function(x) {
 # apply the function to the vector x.
 cdf(x)
 ```
+
+\newpage
 
 ## Question 5
 ## Test your function with other data.

@@ -1,0 +1,134 @@
+---
+title: "STA5075: Practical 14"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-11"
+output: 
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Some more sampling questions!
+## Assume that X is an exponential random variable with rate parameter 5. Now use Monte Carlo simulation to obtain the following quantities:
+
+
+```{r}
+nsamp <- 1000 # number samples drawn
+
+set.seed(123)
+exp_x <- rexp(nsamp, 5) # exponential random variable with rate parameter 5
+
+mean_exp_x <- mean(exp_x) # E[X] 
+mean_exp_x_sq <- mean(exp_x^2) # E[X^2]
+
+# variance = E[X^2] - E[X]^2
+variance = mean_exp_x_sq - (mean_exp_x)^2 # 0.04031277
+variance
+
+var(exp_x) # 0.04035312
+```
+
+
+```{r}
+# probability between 0.1 and 0.3
+
+# solve via integration
+probability <- integrate(function(x) 5 * exp(-5 * x), lower = 0.1, upper = 0.3)$value
+probability # 0.3834005
+
+# Using pexp()
+probability <- pexp(0.3, rate = 5) - pexp(0.1, rate = 5) 
+
+abs(probability) # get the absolute value, 0.3834005
+```
+
+
+
+## Part 2a: Distribution of points in a unit square
+## Consider the following set of points in the unit square. Decide whether or not they are randomly distributed in the square.
+
+```{r}
+# function to compute the euclidean distance between random points:
+distance <- function(){
+  # Sample n points (x;y) by sampling from two uniform distributions 
+  x <- runif(n = 6, min = 0, max = 1)
+  y <- runif(n = 6, min = 0, max = 1)
+  # calculate euclidean distance using dist function in r
+  df <- cbind(x, y)
+  eu.dist <- dist(df)
+  # get the mean distance
+}
+
+distance()
+
+# must be abloe to code this from scratch
+
+dist(x.runif, y.runif) # calculate euclidean distance
+```
+
+
+```{r}
+dist(x.runif, y.runif)/6 # Compute the average distance between these n points
+
+nsim = 10000
+
+dist <- function(x, y){
+  sqrt(sum((x - y)^2))
+}
+
+distance <- numeric(nsim)
+
+for(i in 1:nsim) {
+  x.runif <- runif(n = 6, min = 0, max = 1)
+  y.runif <- runif(n = 6, min = 0, max = 1)
+  distance[i] <- dist(x.runif, y.runif)
+  return(distance)
+}
+
+hist(distance,
+     main = "Euclidean distance in a uniform distribution (10 000 simulations)")
+
+mean(distance)
+sd(distance)
+```
+
+
+```{r}
+# Given points
+x <- c(0.1, .4, .45, .55, .7, .78)
+y <- c(.53, .6, .7, 0.03, .48, .4)
+
+given.dist <- dist(x, y) # calculate euclidean distance
+
+# calculate the probability of getting this distance 
+pnorm(given.dist, mean = mean(distance), sd = sd(distance)) # 0.3370951
+
+plot(x, y, 
+     xlim = c(0,1), 
+     ylim = c(0,1), 
+     pch = 19)
+```
+
+## Part 2b: Distribution of points on a straight line
+## Are these points random between 0 and 1?
+
+```{r}
+rand_x1 <- c(.01, .02, .05, .095, 1)
+xr <- seq(0, 1, by = .01)
+
+plot(xr, rep(0, 101), 
+     col = "white",
+     xlab = "x", 
+     ylab = "", 
+     ylim = c(-.1, .1)) 
+
+abline(h = 0)
+points(rand_x1, rep(0,5), 
+       col = "red", 
+       pch = 19)
+```
+

@@ -1,0 +1,87 @@
+---
+title: "STA5075: Practical 11"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-07"
+output: 
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+## Generate a vector u with 20 random values from a uniform distribution. 
+
+```{r}
+u <- runif(n = 20)
+```
+
+## Now create a new categorical variable u.cat with values depending on the values in u: ‘low’ if ui ≤ 0.3, ‘medium’ if 0.3 < ui ≤ 0.6 and ‘high’ if ui > 0.6.
+
+```{r}
+u.cat <- ifelse(u <= 0.3, "low",
+                ifelse(u <= 0.6 & u > 0.3, "medium", 
+                       "high"))
+
+data.frame(u, u.cat)
+```
+
+## Question 2 
+## How can you vectorize (avoid for loops) the earlier exponential maximum example?
+
+```{r}
+# EARLIER EXPONENTIAL MAXIMUM EXAMPLE
+
+nsim <- 10000 # number of simulations
+emax <- numeric(nsim) # empty vector to store values generated in for loop
+
+for(i in 1:nsim) {
+  vals <- rexp(10, rate = 5) 
+  emax[i] <- max(vals)
+}
+
+# my solution - vectorize
+
+vals <- rexp(100000, rate = 5) # generate 10 000 values 
+vals <- matrix(vals, nrow = 10000, ncol = 10) # turn into a matrix with 10000 rows and 10 columns (so we can get the emax per row)
+
+emax <- apply(vals, 1, function(x) max(x)) # get the max
+print(emax)
+```
+
+## Question 3
+## Create a list object with 4 matrices:
+
+```{r}
+first = matrix(38:67, 3)
+second = matrix(56:91, 3)
+third = matrix(82:144, 3)
+fourth = matrix(46:95, 5)
+listobj = list(first, second, third, fourth)
+
+print(listobj)
+```
+
+## Extract the second column from each of the matrices.
+
+```{r}
+# use lapply() to apply function to every element of a vector or list
+lapply(listobj, function(x) return(x[,2])) # extract 2nd column from each of the matrices
+```
+
+## Question 4
+## Create an array (10x10x10). Fill it up with random numbers. Calculate the trace (i.e. the sum of the diagonal elements) of every matrix (10 matrices each in dimensions 1, 2 and 3).
+
+```{r}
+# create 10x10x10 array with random numbers
+array <- array(rnorm(1000),
+               dim = c(10, 10, 10)) 
+
+trace <- apply(array, 3, function(x) sum(diag(x))) # for each matrix - calculate the trace (sum of diagonal elements)
+
+trace # contains trace values for each of the 10 slices
+```
+

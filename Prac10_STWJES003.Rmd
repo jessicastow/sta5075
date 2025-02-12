@@ -3,8 +3,8 @@ title: "STA5075: Practical 10"
 author: "Jessica Stow (STWJES003@myuct.ac.za)"
 date: "2025-02-07"
 output: 
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 
@@ -12,12 +12,38 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Use a while loop. Simulate a random walk until |rw| > 2. N(0,0.05^2)
-Plot this while ‘walking’.
+## Use a while loop. Simulate a random walk until |rw| > 2. N(0,0.05^2)
+## Plot this while ‘walking’.
 
 ```{r}
-while(x < -2 & x > 2){
-  
+# keeping track of position on walk
+position <- numeric() # create empty vector of type 'numeric'
+position[1] <- 0 # set initial value to 0
+latest.position <- 0 # set starting point of 'walk' to 0
+
+# keeping track of iteration nr
+iteration <- 0 # keep track of iteration number
+i <- 0
+
+# open plot window
+x11()
+plot(0, 0, 
+     type = "n", 
+     xlim = c(0, 5000), 
+     ylim = c(-2, 2),
+     xlab = "Iteration number", 
+     ylab = "Position", 
+     main = "Random walk simulation")
+
+
+# While loop thst simulates a random walk, plotting while walking
+while(latest.position < 2 & latest.position > -2){
+  position <- c(position, latest.position)
+  latest.position <- latest.position + rnorm(1, mean = 0, sd = 0.05) # update latest position by adding a random value from normal distribtuion
+  i <- i + 1 
+  iteration <- c(iteration, i) # vector of position for each iteration
+  lines(iteration, position, 
+        type = 'l') # plot a line between previous and latest position
 }
 ```
 

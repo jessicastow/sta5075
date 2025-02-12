@@ -3,8 +3,8 @@ title: "STA5075: Practical 9"
 author: "Jessica Stow (STWJES003@myuct.ac.za)"
 date: "2025-02-07"
 output: 
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 

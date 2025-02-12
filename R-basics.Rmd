@@ -1,0 +1,19 @@
+
+
+```{r}
+getwd()
+wd <- "/Users/jessicastow/Documents/STA5075/sta5075"
+
+x <- 12/03/1999
+x <- ?date() # today's date
+print(x)
+```
+
+# Functions
+```{r}
+x.plus1 <- function(x) {
+  return(x+1)
+}
+x.plus1(3)
+```
+

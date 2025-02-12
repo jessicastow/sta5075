@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 A slot machine has a single reel - think of this as a circular wheel that can turn - on which one of five different symbols can appear. These symbols are hearts, diamonds, spades, clubs and a joker.
 
-People bet R2 at a time in order to play the game and are paid out according to the symbol that appears after spinning the machine. The reel has 50 tiles and the number of tiles that occurs on the reel for the different types was given in the prac instuctions.
+People bet R2 at a time in order to play the game and are paid out according to the symbol that appears after spinning the machine. The reel has 50 tiles and the number of tiles that occurs on the reel for the different types is [given in the prac instructions].
 
 ## Part 1
 ## What is probability of getting the different winning symbols?
@@ -155,28 +155,9 @@ mean(plays.1000)
 
 ### 3.1 Graphically display the average total pay out after 10/100/1000 plays of the game by means of histograms and box and whisker plots.
 
-#### 10 plays
-
-```{r}
-# 10 Plays
-
-# Histogram
-hist(plays.10,
-     main = "Distribution of average total payouts for 10 spins (10 000 simulations)",
-     xlab = "Total payout (Rands)",
-     ylab = "Count")
-
-# Boxplot
-boxplot(plays.10,
-        main = "Distribution of average total payouts for 10 spins (10 000 simulations)",
-        ylab = "Total payout (Rands)")
-```
-
 #### 10 spins
 
 ```{r}
-# 10 Plays
-
 # Histogram
 hist(plays.10,
      main = "Distribution of average total payouts for 10 spins (10 000 simulations)",
@@ -192,8 +173,6 @@ boxplot(plays.10,
 #### 100 spins
 
 ```{r}
-# 100 spins
-
 # Histogram
 hist(plays.100,
      main = "Distribution of average total payouts for 100 spins (10 000 simulations)",
@@ -201,35 +180,56 @@ hist(plays.100,
      ylab = "Count")
 
 # Boxplot
-boxplot(plays.10,
+boxplot(plays.100,
         main = "Distribution of average total payouts for 100 spins (10 000 simulations)",
         ylab = "Total payout (Rands)")
 ```
 
-#### 100 spins
+#### 1000 spins
 
 ```{r}
-# 100 spins
-
 # Histogram
-hist(plays.100,
-     main = "Distribution of average total payouts for 100 spins (10 000 simulations)",
+hist(plays.1000,
+     main = "Distribution of average total payouts for 1000 spins (10 000 simulations)",
      xlab = "Total payout (Rands)",
      ylab = "Count")
 
 # Boxplot
-boxplot(plays.10,
-        main = "Distribution of average total payouts for 100 spins (10 000 simulations)",
+boxplot(plays.1000,
+        main = "Distribution of average total payouts for 1000 spins (10 000 simulations)",
         ylab = "Total payout (Rands)")
 ```
+
 
 ## 3.2 Describe the distribution of the average total pay out pay out for each case by calculating relevant summary statistics.
 
+It goes without saying that as the number of plays (10/100/1000) increases, the average payout per game increases.
+
+### 10 Plays 
+
 ```{r}
 summary(plays.10)
+```
 
+The distribution is positively right-skewed which suggests that in only a small number of cases will the player finish the game with a large payout, with most games resulting in a low payout. 
+
+### 100 Plays 
+
+When we increase the number of spins the range of the payout widens, but the distribution remains right-skewed.
+
+```{r}
 summary(plays.100)
+```
 
+### 1000 Plays 
+
+When we further increase the number of spins the range of the payout widens, and the distribution appears to be more normally distributed. 
+
+```{r}
 summary(plays.1000)
 ```
 
+If we further increase the number of spins per play we would expect the following:  
+- The average payout will increase.  
+- The range of the payout values widen.  
+- The spread of the values will approach a normal distribution.  

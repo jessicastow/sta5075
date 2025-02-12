@@ -1,0 +1,98 @@
+---
+title: "STA5075: Practical 13"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Rules
+
+The rules of the game are as follows:
+
+- A player starts the game at the block number 1.  
+- The player throws a six-sided die once (1 dice) and moves to a new position depending on the outcome of the throw. e.g. if the player is situated at block number 2 and throws a six he/she would move to block number 8.
+- If the player lands at the foot of a ladder he/she then moves to the top of the ladder. e.g. if the player lands on block number 3 he/she would move to block number 16.  
+- If a player lands on a block containing a snake head he/she moves down to the bottom of the snake. e.g. if the player lands on block number 35 he/she would move to block number 22.  
+- The game ends when a player lands exactly on block number 36. For example, if a player is situated at block number 33 and throws a 5 the player will remain at block number 33 since he/she has to throw a 3 to finish the game.  
+
+Write an R program in order to simulate the above game and provide a histogram of the empirical distribution of how many rounds it will take before the player reaches block number 36. Use this as an opportunity to practice formulating the problem BEFORE coding, and to collaborate with your team mates. Submit your program in an Rmarkdown file, along with the html output of the markdown file.
+
+## Create function for Snakes and Ladders game
+
+```{r}
+# Dice is rolled
+dice <- 1:6
+probs <- rep(1,6)/6
+
+# snakes & ladders (use to take 'old' position and update it to 'new' position)
+old <- c(12, 14, 17, 31, 35, 3, 5, 15, 18, 21)
+new <- c(2, 11, 4, 19, 22, 16, 7, 25, 20, 32)
+
+play <- function() {
+  # A player starts the game at the block number 1.
+  position <- 1
+
+  # Keep track of number of dice rolls in each game
+  count <- 0
+
+  while(position < 36){
+    roll <- sample(dice, size = 1, prob = probs) # roll the dice
+    count <- count + 1
+  
+    # Move the piece forward by adding the number on the dice to its position
+    position <- position + roll
+
+    # Find the index of position
+    index <- which(old == position) # see if the players position is at the top of a snake/bottom of a ladder
+
+    # If on the top of a snake or the bottom of a ladder, update position to its new position
+    if (length(index) > 0) {
+      position <- new[index]
+    } 
+    
+    # If the player moves past 36, send them back
+    if (position > 36) {
+      position <- position - roll # send the player back to the previous position
+    } else if (position == 36) {
+      return(count) # game ends when player reaches block 36
+    }
+  } 
+}
+```
+
+## Play the game
+
+```{r}
+# Play the game
+play()
+```
+
+## Run 10 000 simulations and store the results
+
+```{r}
+# Run 10 000 simulations
+all.games <- numeric() # create vector to store results of all games run in 10 000 simulations
+
+for (i in 1:10000){
+  game <- play() # play the game 
+  all.games[i] <- game[1] # store result 
+}
+```
+
+## Histogram of results of 10 000 simulations
+
+```{r}
+hist(all.games, 
+     prob = TRUE, 
+     breaks = 50, 
+     main = "Probability density of rolls to complete game (simulations = 10 000)", 
+     xlab = "Number of rolls to complete game")
+# abline(v = mean(all.games), col = "red") # add a red line at the mean
+```
+### Observations
+
+From the histogram we can see that the data are right skewed as indicated by the long tail on the right side. Most of the values are concentrated on the lower end of the distribution. This suggests that in most cases fewer rolls are needed to finish the game, but occasionally, much higher roll counts occur.
