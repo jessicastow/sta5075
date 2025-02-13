@@ -1,0 +1,10 @@
+---
+title: "STA5075: Practical 16"
+author: "Jessica Stow (STWJES003@myuct.ac.za)"
+date: "2025-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```

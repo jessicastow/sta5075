@@ -8,3 +8,73 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+Assume these 13 observations are from a Poisson distribution, with rate parameter $\lambda$:
+
+```{r}
+counts <- c(3, 1, 1, 3, 1, 4, 3, 2, 0, 5, 0, 4, 2) 
+```
+
+The log-likelihood is:
+```{r}
+pois.ll <- function(lambda, y) { 
+  sum(dpois(y, lambda, log = TRUE))
+}
+```
+
+The negative log-likelihood is:
+```{r}
+# negative log likelihood
+pois.negll <- function(lambda, y) { 
+  -sum(dpois(y, lambda, log = TRUE))
+}
+```
+
+## Question 1a
+## Use optim() and nlm() (non-linear minimization) to find the MLE for $\lambda$
+
+```{r}
+# using optim()
+
+optim <- optim(par = 5, # Initial values for the parameters to be optimized over.
+               fn = pois.negll, # A function to be minimized (or maximized), here we minimise
+               y = counts, 
+               method = "L-BFGS-B", # use the quasi-Newton method
+               lower = 0.0001,
+               upper = Inf)
+optim
+```
+
+```{r}
+# using nlm()
+nlm <- nlm(f = pois.negll, # function to be minimized
+           y = counts, 
+           p = 5) # Initial values for the parameters to be optimized over.
+```
+
+We get the same number of parameters (= 2.067) and the same MLE value (=23.63712) when running the optim() and nlm() functions. 
+
+## Question 1b
+## Use Newton’s method (from scratch) to find the MLE for $\lambda$ in the above problem.
+
+```{r}
+# page 119
+pois.negll <- function(lambda, y) { 
+  -sum(dpois(y, lambda, log = TRUE))
+}
+
+# parameters: lambda, counts, tol (stopping value for when you find best lambda - use a while loop for stopping rules)
+newton <- function(lambda, counts, tol){
+  ratio <- Inf # initially set ratio to a large nr
+  # keep iterating until our ratio < tol
+  while(abs(ratio) > tol){
+    ratio <- ((length(counts)*(lambda^2))/sum(counts)) - lambda # ratio of 1st to 2nd derivatives
+    lambda <- lambda - ratio # update lambda value
+  }
+  print(lambda) # quit the loop when the optimum value is found
+}
+
+counts <- c(3, 1, 1, 3, 1, 4, 3, 2, 0, 5, 0, 4, 2) 
+newton(lambda = 3, counts = counts, tol = 0.001)
+```
+
