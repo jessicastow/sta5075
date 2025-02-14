@@ -9,28 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Download and import the the “tobacco.txt” 
+# Part 1: Simple linear regression
 
-The response variable burn measures the rate of cigarette burn in inches per 1000 seconds while the explanatory variables are percentages of total nitrogen, chlorine, potassium, phosphorous, calcium and magnesium. It is assumed that the true relationship between the burn rate and the explanatory variables is linear.
-• Explore the data, in particular the relationships between the response and each of the explanatory variables. Show some evidence of your exploratory data analysis and display the relationships on a single plot.
-• Build a correlation matrix that displays the correlations between the response and each of the explanatory variables.
+## a)
+
+### Download and import the the “tobacco.txt” 
 
 ```{r}
 tobacco <- read.delim("tobacco.txt")
-View(tobacco)
-```
-
-```{r}
 summary(tobacco)
 ```
 
-```{r}
-data(mtcars) 
-# Create a scatter plot matrix using the pairs() function 
-pairs(mtcars[, c(1, 3:6)], main = "Scatter Plot Matrix for mtcars Dataset")
+### The response variable burn measures the rate of cigarette burn in inches per 1000 seconds while the explanatory variables are percentages of total nitrogen, chlorine, potassium, phosphorous, calcium and magnesium. It is assumed that the true relationship between the burn rate and the explanatory variables is linear.
 
-```
-
+### Explore the data, in particular the relationships between the response and each of the explanatory variables. Show some evidence of your exploratory data analysis and display the relationships on a single plot.
 
 ```{r}
 par(mfrow = c(2,4))
@@ -58,29 +50,40 @@ plot(tobacco$burn, tobacco$calcium)
 
 ## Relationship between burn and magnes
 plot(tobacco$burn, tobacco$magnes)
-
-
 ```
+
+### Build a correlation matrix that displays the correlations between the response and each of the explanatory variables.
+
 ```{r}
 # Correlation matrix
 cor(tobacco)
 ```
 
-Fit a simple linear regression model using lm() and print the model output. Choose the most pertinent explanatory variable to model the response variable, providing a motivation for your choice from the output in (a).
+## b) 
+### Fit a simple linear regression model using lm() and print the model output. Choose the most pertinent explanatory variable to model the response variable, providing a motivation for your choice from the output in (a).
 
 ```{r}
-#perform ordinary least squares regression using lm() function from stats package:
-ols <- lm(tobacco$burn ~ tobacco$chlorine)
+# fit linear regression model
+lm.chlorine <- lm(burn ~ chlorine, data = tobacco)
 
-plot(x = tobacco$chlorine, y = tobacco$burn)
-abline(ols, col="red", lty=2)
+# plot the relationship to visualise
+plot(x = tobacco$chlorine, 
+     y = tobacco$burn,
+     ylab = "Burn rate",
+     xlab = "Chlorine level")
+abline(lm.chlorine, col="red", lty=2)
 ```
 
-# optimising for intercept and coefficients
-# use chlorine because it has the strongest correlation (neg corr)
+I plotted chlorine (explanatory variable) against burn (response variable). The reason I chose chlorine is because it has the highest (absolute) correlation coefficient (correlation coefficient = -0.6234392), indicating a strong negative linear relationship. This makes it the most suitable predictor for our linear model, as variables with higher correlation tend to contribute more effectively to explaining variability in the response variable.
+
+## c)
+### From first principles, create a function to fit a simple linear regression model, and find the least squares estimates using optim(). Compare the results to those found in (b).
 
 ```{r}
-regression_f <- function(betav,x,y){
+# use chlorine because it has the strongest correlation (neg corr)
+
+# here we optimising for intercept and coefficients
+regression_f <- function(betav, x, y){
   # x = explanatory variable
   # y = response variable
   # betav = c(intercept, slope)
@@ -89,38 +92,156 @@ regression_f <- function(betav,x,y){
   fitted_values <- intercept + slope*x 
   residuals <- y - fitted_values
   SSE <- sum(residuals^2) # a loss function return (SSE)
+  return(SSE) # we are optimising for lowest SSE
 }
 
 olsfit <- optim(par = c(10,10), 
                 fn = regression_f, 
                 y = tobacco$burn, 
                 x = tobacco$chlorine) 
+
+olsfit$par[1] # intercept = 2.111097
+olsfit$par[2] # slope = -0.1702047
+```
+
+We used chlorine as the predictor since it has the strongest correlation of all the variables. We optimised for the lowest SSE. Our predicted outputs using least squares estimates using `optim()` were as follows: 
+
+- intercept: 2.111097
+- slope: -0.1702047
+
+These estimates matched the estimates given in the `lm()` function.
+
+## d)
+### Use optim() o maximise the [given] loglikelihood. Once again, assume that you only have one explanatory variable. Take note that you now also have to estimate $/sigma$ and that it has to be positive. Read up on the use of optim() and how to set constraints on parameters. You might also consider transforming σ to some other variable.
+
+
+```{r}
+int.par <- c(0.5, 0.5, 0.5)
+n <- nrow(tobacco)
+
+likelihood_f <- function(int.par, x, y){
+  var <- int.par[1]
+  intercept <- int.par[2]
+  slope <- int.par[3]
+  ll <- -0.5*n*log(2*pi)-0.5*n*log(var)-0.5*(1/var)*sum((y-intercept-slope*x)^2)
+  return(-ll)
+}
+
+# use optim to optimise the max log likelihood
+optim(par = int.par, 
+      fn = likelihood_f, 
+      y = tobacco$burn, 
+      x = tobacco$chlorine,
+      method = "L-BFGS-B",
+      lower = c(0.0001, -Inf, -Inf), # setting constraints, variance must be > 0
+      upper = c(Inf, Inf, Inf)) 
+```
+# Part 2
+## Using output from Part 1, fit a simple linear model using the most appropriate predictor. 
+
+```{r}
+lm <- lm(tobacco$burn ~ tobacco$chlorine)
+```
+
+## Take note of the correlation between the response variable and the fitted values of the regression. The square of this amount is known as the coefficient of determination (‘Multiple R-squared’ or simply R^2).
+```{r}
+cor(tobacco$burn,tobacco$chlorine) # -0.6234392
+cor(tobacco$burn,tobacco$chlorine)^2 # Multiple R squared = 0.3886764
+```
+
+
+## Explain what this quantity represents and why a larger R2 is preferred. 
+- R squared is the amount of variation in the dependent variable that can be explained by the independent variables
+- A larger R squared is preferred since ...
+
+## Use the summary output and take note of the R2 amount. Comment on the significance of the beta parameters and whether regression analysis should be undertaken on this data.
+
+```{r}
+summary(lm)
+
+# Multiple R-squared:  0.3887
+# beta parameters are significant (p-value: 0.00087) so regression analysis can be undertaken
+```
+
+##  Add the remaining variables to the regression model one at a time. Add the variable with the next largest (absolute) correlation coefficient between with the response variable and so forth. Take note of the correlation co- efficient between the fitted values of the response variable for the new regression equations and the response variable, the R2 value and the significance of the beta parameters.
+
+```{r}
+cor(tobacco)[,1]
+```
+
+
+```{r}
+lm2 <- lm(tobacco$burn ~ tobacco$chlorine + tobacco$potas, data = tobacco)
+summary(lm2)
+```
+
+
+# Fit the full model. i.e. the model that includes all of the explanatory variables. Comment on the estimation results.
+```{r}
+full_lm <- lm(tobacco$burn ~ ., data = tobacco)
+summary(full_lm)
+```
+
+## Suggest a suitable final model/s. Explain your choice. Are all of the beta coefficients significant? Is the F statistic significant?
+
+```{r}
+
+```
+
+## Once you have chosen a suitable model you now have to check whether or not the assumptions made at the start of the estimation phase are satisfied. i.e. Are the residuals normally distributed? What is mean of the residual series? Are the residuals homoscedastic? Are the residuals independent?
+
+```{r}
+
+
+
+```
+
+
+## Plot the histogram of the estimated residuals. Do they look normally distributed? (don’t always trust your eye). Use the car package and plot the QQ plot of the estimated residuals. (A QQ plot can be produced by first order- ing the estimated residuals in ascending order and then using a standard normal to calculate the quantiles associated with the ordered residuals. If the residuals are normally distributed the plotted values should lie close to a straight line.)
+
+```{r}
+
+
+```
+
+##  Formal tests of normality can be undertaken by using the ks.test and the shapiro.test function. Use these functions to test whether the residuals are normally distributed.
+
+```{r}
+
+```
+
+
+## Write a function to fit a multiple regression model from first principles. Use this function and optim() to find the MLE estimates for the coeffi- cients of your chosen model in (e).
+
+```{r}
+
+#initial parameter values:
+B <- c(1, 0.1, -0.1, 0.1)
+n <- nrow(tobacco)
+
+n <- nrow(tobacco)
+
+# Create X and Y matrixes. Note you will need a column of 1s in X to represent the intercept!
+X <- data.frame(intercept = 1, tobacco[2:4])
+X <- as.matrix(X)
+View(X)
+Y <- tobacco$burn
+
+# multiple linear regression
+mlr_f <- function(B, X, Y){
+  SSE <- t(Y-X%*%B) %*% (Y-X%*%B) # need to use matrix multiplication # a loss function return (SSE)
+  return(SSE)
+}
+
+olsfit <- optim(par = B, 
+                fn = mlr_f,
+                X = X,
+                Y = Y)
+
 olsfit$par
 
 # lm 
 lm(burn ~ chlorine, data = tobacco)
 ```
 
-# use optim to optimise the max log likelihood
-
-```{r}
-int.par <- c(0.5, 0.5, 0.5)
-
-likelihood_f <- function(int.par, x, y){
-  var <- int.par[1]
-  intercept <- int.par[2]
-  slope <- int.par[3]
-  n <- length(y)
-  ll <- -0.5*n*log(2*pi)-0.5*n*log(var)-0.5*(1/var)*sum((y-intercept-slope*x)^2)
-  return(-ll)
-}
-
-optim(par = int.par, 
-      fn = likelihood_f, 
-      y = tobacco$burn, 
-      x = tobacco$chlorine,
-      method = "L-BFGS-B",
-      lower = c(0.0001, -Inf, -Inf), 
-      upper = c(Inf, Inf, Inf)) 
-```
 
