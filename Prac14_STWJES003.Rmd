@@ -27,8 +27,9 @@ mean_exp_x_sq <- mean(exp_x^2) # E[X^2]
 
 # variance = E[X^2] - E[X]^2
 variance = mean_exp_x_sq - (mean_exp_x)^2 # 0.04031277
-variance
+variance # 0.04031277
 
+# check answer
 var(exp_x) # 0.04035312
 ```
 
@@ -40,13 +41,11 @@ var(exp_x) # 0.04035312
 probability <- integrate(function(x) 5 * exp(-5 * x), lower = 0.1, upper = 0.3)$value
 probability # 0.3834005
 
-# Using pexp()
+# check answer, using pexp()
 probability <- pexp(0.3, rate = 5) - pexp(0.1, rate = 5) 
 
 abs(probability) # get the absolute value, 0.3834005
 ```
-
-
 
 ## Part 2a: Distribution of points in a unit square
 ## Consider the following set of points in the unit square. Decide whether or not they are randomly distributed in the square.
@@ -61,6 +60,7 @@ distance <- function(){
   df <- cbind(x, y)
   eu.dist <- dist(df)
   # get the mean distance
+  return(eu.dist)
 }
 
 distance()

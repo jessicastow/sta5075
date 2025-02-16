@@ -1,13 +1,17 @@
 ---
-title: "STA5075: Practical 15"
+title: 'STA5075: Practical 15'
 author: "Jessica Stow (STWJES003@myuct.ac.za)"
 date: "2025-02-12"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Maximum likelihood estimation
 
 Assume these 13 observations are from a Poisson distribution, with rate parameter $\lambda$:
 
@@ -23,6 +27,10 @@ pois.ll <- function(lambda, y) {
 }
 ```
 
+## Question 1a
+
+Use optim() and nlm() (non-linear minimization) to find the MLE for $\lambda$
+
 The negative log-likelihood is:
 
 ```{r}
@@ -31,10 +39,6 @@ pois.negll <- function(lambda, y) {
   -sum(dpois(y, lambda, log = TRUE))
 }
 ```
-
-## Question 1a
-
-Use optim() and nlm() (non-linear minimization) to find the MLE for $\lambda$
 
 ```{r}
 # using optim()
@@ -53,15 +57,24 @@ optim
 nlm <- nlm(f = pois.negll, # function to be minimized
            y = counts, 
            p = 5) # Initial values for the parameters to be optimized over.
+
+nlm
 ```
 
-We get the same number of parameters (= 2.067) and the same MLE value (=23.63712) when running the optim() and nlm() functions.
+The Poisson negative log-likelihood minimisation was successful using both the optim() and nlm() functions:  
+
+- The optimal parameter estimate is 2.230769.    
+- The algorithm converged normally (convergence = 0).   
+- It found the minimum negative log-likelihood at 23.63712 after 9 iterations.   
+
+\newpage 
 
 ## Question 1b
+
 Use Newton’s method (from scratch) to find the MLE for $\lambda$ in the above problem.
 
 ```{r}
-# page 119
+# see page 119 for notes on Newton's method
 pois.negll <- function(lambda, y) { 
   -sum(dpois(y, lambda, log = TRUE))
 }
@@ -80,3 +93,35 @@ newton <- function(lambda, counts, tol){
 counts <- c(3, 1, 1, 3, 1, 4, 3, 2, 0, 5, 0, 4, 2) 
 newton(lambda = 3, counts = counts, tol = 0.001)
 ```
+
+\newpage
+
+## Question 1c  
+
+Plot the function and check your answer.
+
+```{r}
+# Define a range of lambda values
+lambda <- seq(0.1, 10, length.out = 1000)
+
+# Compute the negative log-likelihood for each value of lambda
+negll <- sapply(lambda, pois.negll, y = counts)
+
+# Plot the function
+plot(lambda, negll, 
+     type = "l", lwd = 2,
+     xlab = expression(lambda), 
+     ylab = "Negative Log-Likelihood",
+     main = "Poisson Negative Log-Likelihood Function: Estimating Lambda")
+
+# Add a point for the estimated lambda using Newton's method
+lambda_hat <- newton(lambda = 3, counts = counts, tol = 0.001)
+points(lambda_hat, pois.negll(lambda_hat, counts), col = "red", pch = 19, cex = 1.5)
+
+# Annotate the optimal lambda
+text(lambda_hat, pois.negll(lambda_hat, counts) + 5, 
+     labels = paste0("Optimal lambda = ", round(lambda_hat, 2)), col = "red", pos = 3)
+
+```
+
+When we plot the function we can visualise where the MLE is minimised, at a lambda value of ~ 2.23, the same lambda value as estimated earlier using both the nlm() and optim() functions.

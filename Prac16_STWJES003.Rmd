@@ -1,8 +1,10 @@
 ---
-title: "STA5075: Practical 16"
+title: 'STA5075: Practical 16'
 author: "Jessica Stow (STWJES003@myuct.ac.za)"
 date: "2025-02-13"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -25,32 +27,23 @@ summary(tobacco)
 ### Explore the data, in particular the relationships between the response and each of the explanatory variables. Show some evidence of your exploratory data analysis and display the relationships on a single plot.
 
 ```{r}
-par(mfrow = c(2,4))
+par(mfrow = c(2, 4))  
 
-## Relationship between burn and sugar
-plot(tobacco$burn, tobacco$sugar)
+# Define variable names
+variables <- c("sugar", "nicotine", "nitrogen", "chlorine", 
+          "potas", "phospho", "calcium", "magnes")
 
-## Relationship between burn and nicotine
-plot(tobacco$burn, tobacco$nicotine)
+# Loop through variables and plot
+lapply(variables, function(var) {
+  plot(tobacco$burn, tobacco[[var]], 
+       xlab = "Burn rate", ylab = var, 
+       main = paste("Burn rate vs.", var))
+})
 
-## Relationship between burn and nitrogen
-plot(tobacco$burn, tobacco$nitrogen)
-
-## Relationship between burn and chlorine
-plot(tobacco$burn, tobacco$chlorine)
-
-## Relationship between burn and potas
-plot(tobacco$burn, tobacco$potas)
-
-## Relationship between burn and phospho
-plot(tobacco$burn, tobacco$phospho)
-
-## Relationship between burn and calcium
-plot(tobacco$burn, tobacco$calcium)
-
-## Relationship between burn and magnes
-plot(tobacco$burn, tobacco$magnes)
 ```
+
+It appears that the relationship between burn rate and chlorine is strong (and negative), 
+The relationship between burn rate and potassium seems to also be strong (and positive). For the remaining variables, no obvious linear relationship with burn rate is evident. 
 
 ### Build a correlation matrix that displays the correlations between the response and each of the explanatory variables.
 
@@ -58,6 +51,8 @@ plot(tobacco$burn, tobacco$magnes)
 # Correlation matrix
 cor(tobacco)
 ```
+
+\newpage
 
 ## b)
 
@@ -76,6 +71,8 @@ abline(lm.chlorine, col="red", lty=2)
 ```
 
 I plotted chlorine (explanatory variable) against burn (response variable). The reason I chose chlorine is because it has the highest (absolute) correlation coefficient (correlation coefficient = -0.6234392), indicating a strong negative linear relationship. This makes it the most suitable predictor for our linear model, as variables with higher correlation tend to contribute more effectively to explaining variability in the response variable.
+
+\newpage
 
 ## c)
 
@@ -113,9 +110,11 @@ We used chlorine as the predictor since it has the strongest correlation of all 
 
 These estimates matched the estimates given in the `lm()` function.
 
+\newpage
+
 ## d)
 
-### Use optim() o maximise the [given] loglikelihood. Once again, assume that you only have one explanatory variable. Take note that you now also have to estimate $\\sigma$ and that it has to be positive. Read up on the use of optim() and how to set constraints on parameters. You might also consider transforming σ to some other variable.
+### Use optim() o maximise the [given] loglikelihood. Once again, assume that you only have one explanatory variable. Take note that you now also have to estimate sigma and that it has to be positive. Read up on the use of optim() and how to set constraints on parameters. You might also consider transforming sigma to some other variable.
 
 ```{r}
 int.par <- c(0.5, 0.5, 0.5)
@@ -138,6 +137,8 @@ optim(par = int.par,
       lower = c(0.0001, -Inf, -Inf), # setting constraints, variance must be > 0
       upper = c(Inf, Inf, Inf)) 
 ```
+
+\newpage
 
 # Part 2: Multiple Regression in R
 
@@ -242,17 +243,16 @@ summary(full_lm)
 ## Write a function to fit a multiple regression model from first principles. Use this function and optim() to find the MLE estimates for the coeffi- cients of your chosen model in (e).
 
 ```{r}
-
-#initial parameter values:
+# initial parameter values:
 B <- c(1, 0.1, -0.1, 0.1)
 n <- nrow(tobacco)
 
 n <- nrow(tobacco)
 
 # Create X and Y matrixes. Note you will need a column of 1s in X to represent the intercept!
-X <- data.frame(intercept = 1, tobacco[2:4])
+X <- data.frame(intercept = 1, tobacco[c("chlorine", "potas", "magnes")])
 X <- as.matrix(X)
-View(X)
+
 Y <- tobacco$burn
 
 # multiple linear regression
